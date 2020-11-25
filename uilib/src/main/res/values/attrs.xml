@@ -18,4 +18,13 @@
         <attr name="civShowEdgeMidPoint" format="boolean" />
         <attr name="civPointRadius" format="dimension" />
     </declare-styleable>
+
+
+    <!--二维码扫描控件-->
+    <declare-styleable name="ScannerBarView">
+        <!--扫描bar资源-->
+        <attr name="scan_bar" format="reference" />
+        <!--扫描周期（扫描一次的时间）-->
+        <attr name="scan_period" format="integer" />
+    </declare-styleable>
 </resources>
