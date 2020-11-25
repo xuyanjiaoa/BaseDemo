@@ -18,7 +18,7 @@ import androidx.annotation.Nullable;
 import com.emp.yjy.uilib.R;
 
 /**
- * 二维码扫描空间
+ * 二维码扫描控件
  *
  * @author Created by LRH
  * @date 2020/11/25 14:13
