@@ -1,5 +1,27 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
+
+    ext {
+
+        compileSdkVersion = 30
+        buildToolsVersion = "30.0.2"
+        minSdkVersion = 19
+        targetSdkVersion = 30
+
+
+
+
+        ZBar = 'cn.bingoogolapple:bga-qrcode-zbar:1.3.7'
+        fotoapparat = 'io.fotoapparat:fotoapparat:2.7.0'
+        KotlinStdlib = 'org.jetbrains.kotlin:kotlin-stdlib:1.3.0'
+        ImageSelector = 'com.github.donkingliang:ImageSelector:2.2.0'
+        Glide = 'com.github.bumptech.glide:glide:4.11.0'
+        GligeAnnotationProcessor = 'com.github.bumptech.glide:compiler:4.11.0'
+        immersionbar = 'com.gyf.immersionbar:immersionbar:3.0.0'
+        permissionx = 'com.permissionx.guolindev:permissionx:1.4.0'
+        appcompat = 'androidx.appcompat:appcompat:1.2.0'
+    }
+
     repositories {
         google()
         jcenter()
