@@ -18,6 +18,20 @@
            android:layout_margin="5dp"
            android:layout_height="wrap_content" />
 
+       <Button
+           android:text="遮罩控件Demo"
+           android:id="@+id/btn_camera_lens_view"
+           android:layout_width="match_parent"
+           android:layout_margin="5dp"
+           android:layout_height="wrap_content" />
+
+       <Button
+           android:text="扫描控件Demo"
+           android:id="@+id/btn_scan_view"
+           android:layout_width="match_parent"
+           android:layout_margin="5dp"
+           android:layout_height="wrap_content" />
+
 
 
 

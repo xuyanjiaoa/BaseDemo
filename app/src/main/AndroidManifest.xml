@@ -17,6 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ScanBarViewDemoActivity" />
+        <activity android:name=".CameraLensViewDemoActivity" />
+        <activity android:name=".ScanViewDemoActivity" />
     </application>
 
 </manifest>
