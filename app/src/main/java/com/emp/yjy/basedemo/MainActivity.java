@@ -16,6 +16,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private Button mBtnScanViewDemo;
     private Button mBtnCameraLensView;
     private Button mBtnScanView;
+    private Button mBtnCameraView;
 
     @Override
     protected void initData() {
@@ -27,6 +28,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mBtnScanViewDemo = findViewById(R.id.btn_scan_bar_view_demo);
         mBtnCameraLensView = findViewById(R.id.btn_camera_lens_view);
         mBtnScanView = findViewById(R.id.btn_scan_view);
+        mBtnCameraView = findViewById(R.id.btn_camera_view);
     }
 
     @Override
@@ -40,6 +42,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mBtnScanViewDemo.setOnClickListener(this::onClick);
         mBtnCameraLensView.setOnClickListener(this::onClick);
         mBtnScanView.setOnClickListener(this::onClick);
+        mBtnCameraView.setOnClickListener(this::onClick);
 
     }
 
@@ -55,7 +58,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.btn_scan_view:
                 jumpToActivity(ScanViewDemoActivity.class);
-
+                break;
+            case R.id.btn_camera_view:
+                jumpToActivity(CameraViewDemoActivity.class);
+                break;
             default:
                 break;
         }
