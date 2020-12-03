@@ -20,6 +20,7 @@ buildscript {
         immersionbar = 'com.gyf.immersionbar:immersionbar:3.0.0'
         permissionx = 'com.permissionx.guolindev:permissionx:1.4.0'
         appcompat = 'androidx.appcompat:appcompat:1.2.0'
+        annotation = 'androidx.annotation:annotation:1.1.0'
     }
 
     repositories {
