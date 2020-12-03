@@ -634,6 +634,15 @@ public class CameraLensView extends View {
         executeInvalidateDelay();
     }
 
+    public boolean isShowBoxAngle() {
+        return showBoxAngle;
+    }
+
+    public void setShowBoxAngle(boolean showBoxAngle) {
+        this.showBoxAngle = showBoxAngle;
+        executeInvalidateDelay();
+    }
+
     public interface OnInitCameraLensCallBack {
 
         /**

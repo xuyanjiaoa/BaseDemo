@@ -18,7 +18,7 @@ import androidx.annotation.Nullable;
 import com.emp.yjy.uilib.R;
 
 /**
- * 二维码扫描控件
+ * 扫描控件
  *
  * @author Created by LRH
  * @date 2020/11/25 14:13
@@ -57,7 +57,7 @@ public class ScannerBarView extends ViewGroup {
      * @param attrs
      * @param defStyleAttr
      */
-    private void initAttr(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    void initAttr(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ScannerBarView, defStyleAttr, 0);
         int scanBarResId = a.getResourceId(R.styleable.ScannerBarView_scan_bar, R.drawable.default_scanner_bar);
         mScanBar.setImageResource(scanBarResId);
