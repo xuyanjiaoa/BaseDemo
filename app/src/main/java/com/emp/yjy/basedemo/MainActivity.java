@@ -17,6 +17,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private Button mBtnCameraLensView;
     private Button mBtnScanView;
     private Button mBtnCameraView;
+    private Button mBtnScreenAutoSize;
 
     @Override
     protected void initData() {
@@ -29,6 +30,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mBtnCameraLensView = findViewById(R.id.btn_camera_lens_view);
         mBtnScanView = findViewById(R.id.btn_scan_view);
         mBtnCameraView = findViewById(R.id.btn_camera_view);
+        mBtnScreenAutoSize = findViewById(R.id.screen_auto_size);
     }
 
     @Override
@@ -43,6 +45,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mBtnCameraLensView.setOnClickListener(this::onClick);
         mBtnScanView.setOnClickListener(this::onClick);
         mBtnCameraView.setOnClickListener(this::onClick);
+        mBtnScreenAutoSize.setOnClickListener(this::onClick);
 
     }
 
@@ -61,6 +64,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.btn_camera_view:
                 jumpToActivity(CameraViewDemoActivity.class);
+                break;
+            case R.id.screen_auto_size:
+                jumpToActivity(ScreenAutoSizeDemoActivity.class);
                 break;
             default:
                 break;
