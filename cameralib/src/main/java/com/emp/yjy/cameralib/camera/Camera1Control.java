@@ -48,7 +48,7 @@ class Camera1Control implements ICameraControl {
     private Camera.Size optSize;
     private View displayView;
     private boolean mAutoFocus;
-    private long mFocusInterVal = DEFAULT_FOCUS_INTERVAL ;
+    private long mFocusInterVal = DEFAULT_FOCUS_INTERVAL;
     private Thread mFocusThread;
 
 
@@ -385,6 +385,7 @@ class Camera1Control implements ICameraControl {
                 camera.setParameters(parameters);
             } catch (RuntimeException e) {
                 e.printStackTrace();
+                LogUtils.e(TAG, e.getMessage());
 
             }
         }
@@ -444,7 +445,13 @@ class Camera1Control implements ICameraControl {
                 parameters.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
                 break;
         }
-        camera.setParameters(parameters);
+        try {
+            camera.setParameters(parameters);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            LogUtils.e(TAG, e.getMessage());
+        }
+
     }
 
     private int getSurfaceOrientation() {
