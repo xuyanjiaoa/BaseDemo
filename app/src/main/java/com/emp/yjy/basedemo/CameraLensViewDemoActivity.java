@@ -6,6 +6,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 
+import com.emp.yjy.basedemo.base.CusBaseActivity;
 import com.emp.yjy.baselib.base.BaseActivity;
 import com.emp.yjy.baselib.utils.LogUtils;
 import com.emp.yjy.baselib.utils.ScreenUtils;
@@ -16,7 +17,7 @@ import com.emp.yjy.uilib.scan.CameraLensView;
  *
  * @author SZ02204
  */
-public class CameraLensViewDemoActivity extends BaseActivity implements View.OnClickListener {
+public class CameraLensViewDemoActivity extends CusBaseActivity implements View.OnClickListener {
     private static final String TAG = "CameraLensViewDemoActiv";
     private CameraLensView mCameraLensView;
     private ImageView mBgImage;

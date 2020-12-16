@@ -15,18 +15,33 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BaseDemo">
-        <activity android:name=".ScreenAutoSizeDemoActivity"></activity>
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ScanBarViewDemoActivity" />
-        <activity android:name=".CameraLensViewDemoActivity" />
-        <activity android:name=".ScanViewDemoActivity" />
-        <activity android:name=".CameraViewDemoActivity" />
+        <activity
+            android:name=".ScanBarViewDemoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CameraLensViewDemoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ScanViewDemoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CameraViewDemoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SoundPlayDemoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ScreenAutoSizeDemoActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

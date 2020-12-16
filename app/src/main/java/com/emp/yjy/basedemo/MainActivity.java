@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 
+import com.emp.yjy.basedemo.base.CusBaseActivity;
 import com.emp.yjy.baselib.base.BaseActivity;
 
 /**
@@ -12,12 +13,13 @@ import com.emp.yjy.baselib.base.BaseActivity;
  *
  * @author SZ02204
  */
-public class MainActivity extends BaseActivity implements View.OnClickListener {
+public class MainActivity extends CusBaseActivity implements View.OnClickListener {
     private Button mBtnScanViewDemo;
     private Button mBtnCameraLensView;
     private Button mBtnScanView;
     private Button mBtnCameraView;
     private Button mBtnScreenAutoSize;
+    private Button mBtnSoundPlay;
 
     @Override
     protected void initData() {
@@ -31,6 +33,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mBtnScanView = findViewById(R.id.btn_scan_view);
         mBtnCameraView = findViewById(R.id.btn_camera_view);
         mBtnScreenAutoSize = findViewById(R.id.screen_auto_size);
+        mBtnSoundPlay = findViewById(R.id.btn_sound_play);
     }
 
     @Override
@@ -46,7 +49,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mBtnScanView.setOnClickListener(this::onClick);
         mBtnCameraView.setOnClickListener(this::onClick);
         mBtnScreenAutoSize.setOnClickListener(this::onClick);
-
+        mBtnSoundPlay.setOnClickListener(this::onClick);
     }
 
     @Override
@@ -67,6 +70,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.screen_auto_size:
                 jumpToActivity(ScreenAutoSizeDemoActivity.class);
+                break;
+            case R.id.btn_sound_play:
+                jumpToActivity(SoundPlayDemoActivity.class);
                 break;
             default:
                 break;

@@ -1,5 +1,6 @@
 package com.emp.yjy.basedemo;
 
+import com.emp.yjy.basedemo.base.CusBaseActivity;
 import com.emp.yjy.baselib.base.BaseActivity;
 import com.emp.yjy.baselib.screen.ICustomScreenAdapter;
 
@@ -7,7 +8,7 @@ import com.emp.yjy.baselib.screen.ICustomScreenAdapter;
  * @author SZ02204
  * 屏幕适配工具类使用示例
  */
-public class ScreenAutoSizeDemoActivity extends BaseActivity implements ICustomScreenAdapter {
+public class ScreenAutoSizeDemoActivity extends CusBaseActivity implements ICustomScreenAdapter {
     @Override
     protected void initData() {
 

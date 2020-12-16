@@ -2,6 +2,7 @@ package com.emp.yjy.basedemo;
 
 import android.Manifest;
 
+import com.emp.yjy.basedemo.base.CusBaseActivity;
 import com.emp.yjy.baselib.base.BaseActivity;
 import com.emp.yjy.baselib.utils.LogUtils;
 import com.emp.yjy.baselib.utils.PermissionUtils;
@@ -14,7 +15,7 @@ import java.util.List;
  * @author Created by LRH
  * @date 2020/12/3 16:05
  */
-public class CameraViewDemoActivity extends BaseActivity {
+public class CameraViewDemoActivity extends CusBaseActivity {
     private static final String TAG = "CameraViewDemoActivity";
     private CameraView mCameraView;
 

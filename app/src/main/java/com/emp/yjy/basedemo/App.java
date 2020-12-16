@@ -1,6 +1,12 @@
 package com.emp.yjy.basedemo;
 
+import android.app.Activity;
 import android.app.Application;
+import android.content.pm.ActivityInfo;
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.emp.yjy.baselib.screen.ScreenAdapter;
 

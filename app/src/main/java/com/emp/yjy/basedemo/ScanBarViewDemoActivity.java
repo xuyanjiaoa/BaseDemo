@@ -3,6 +3,7 @@ package com.emp.yjy.basedemo;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.emp.yjy.basedemo.base.CusBaseActivity;
 import com.emp.yjy.baselib.base.BaseActivity;
 import com.emp.yjy.baselib.utils.DensityUtils;
 import com.emp.yjy.baselib.utils.ScreenUtils;
@@ -13,7 +14,7 @@ import com.emp.yjy.uilib.scan.ScannerBarView;
  *
  * @author SZ02204
  */
-public class ScanBarViewDemoActivity extends BaseActivity implements View.OnClickListener {
+public class ScanBarViewDemoActivity extends CusBaseActivity implements View.OnClickListener {
     private ScannerBarView mScannerBarView;
 //    private ScannerBarView2 mScannerBarView;
 

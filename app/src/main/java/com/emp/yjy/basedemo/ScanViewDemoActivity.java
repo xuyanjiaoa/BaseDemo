@@ -2,6 +2,7 @@ package com.emp.yjy.basedemo;
 
 import android.widget.RadioGroup;
 
+import com.emp.yjy.basedemo.base.CusBaseActivity;
 import com.emp.yjy.baselib.base.BaseActivity;
 import com.emp.yjy.baselib.utils.DensityUtils;
 import com.emp.yjy.baselib.utils.ScreenUtils;
@@ -14,7 +15,7 @@ import com.emp.yjy.uilib.scan.CameraScannerMaskView;
  * @author Created by LRH
  * @date 2020/12/3 9:55
  */
-public class ScanViewDemoActivity extends BaseActivity {
+public class ScanViewDemoActivity extends CusBaseActivity {
     private CameraScannerMaskView mCameraScannerMaskView;
     private RadioGroup mRadioGroup;
 
