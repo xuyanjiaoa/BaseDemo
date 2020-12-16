@@ -1,10 +1,9 @@
-package com.emp.yjy.basedemo;
+package com.emp.yjy.basedemo.activity;
 
 import android.widget.RadioGroup;
 
+import com.emp.yjy.basedemo.R;
 import com.emp.yjy.basedemo.base.CusBaseActivity;
-import com.emp.yjy.baselib.base.BaseActivity;
-import com.emp.yjy.baselib.utils.DensityUtils;
 import com.emp.yjy.baselib.utils.ScreenUtils;
 import com.emp.yjy.uilib.scan.CameraLensView;
 import com.emp.yjy.uilib.scan.CameraScannerMaskView;

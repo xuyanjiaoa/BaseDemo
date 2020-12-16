@@ -1,12 +1,12 @@
-package com.emp.yjy.basedemo;
+package com.emp.yjy.basedemo.activity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 
+import com.emp.yjy.basedemo.R;
 import com.emp.yjy.basedemo.base.CusBaseActivity;
-import com.emp.yjy.baselib.base.BaseActivity;
 
 /**
  * 使用示例
@@ -20,6 +20,7 @@ public class MainActivity extends CusBaseActivity implements View.OnClickListene
     private Button mBtnCameraView;
     private Button mBtnScreenAutoSize;
     private Button mBtnSoundPlay;
+    private Button mBtnMultiDisplay;
 
     @Override
     protected void initData() {
@@ -34,6 +35,7 @@ public class MainActivity extends CusBaseActivity implements View.OnClickListene
         mBtnCameraView = findViewById(R.id.btn_camera_view);
         mBtnScreenAutoSize = findViewById(R.id.screen_auto_size);
         mBtnSoundPlay = findViewById(R.id.btn_sound_play);
+        mBtnMultiDisplay = findViewById(R.id.btn_multi_display);
     }
 
     @Override
@@ -50,6 +52,7 @@ public class MainActivity extends CusBaseActivity implements View.OnClickListene
         mBtnCameraView.setOnClickListener(this::onClick);
         mBtnScreenAutoSize.setOnClickListener(this::onClick);
         mBtnSoundPlay.setOnClickListener(this::onClick);
+        mBtnMultiDisplay.setOnClickListener(this::onClick);
     }
 
     @Override
@@ -73,6 +76,9 @@ public class MainActivity extends CusBaseActivity implements View.OnClickListene
                 break;
             case R.id.btn_sound_play:
                 jumpToActivity(SoundPlayDemoActivity.class);
+                break;
+            case R.id.btn_multi_display:
+                jumpToActivity(MultiDisplayActivity.class);
                 break;
             default:
                 break;

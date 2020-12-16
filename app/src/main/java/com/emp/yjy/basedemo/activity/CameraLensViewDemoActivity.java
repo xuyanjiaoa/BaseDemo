@@ -1,4 +1,4 @@
-package com.emp.yjy.basedemo;
+package com.emp.yjy.basedemo.activity;
 
 import android.graphics.Rect;
 import android.view.View;
@@ -6,6 +6,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 
+import com.emp.yjy.basedemo.R;
 import com.emp.yjy.basedemo.base.CusBaseActivity;
 import com.emp.yjy.baselib.base.BaseActivity;
 import com.emp.yjy.baselib.utils.LogUtils;

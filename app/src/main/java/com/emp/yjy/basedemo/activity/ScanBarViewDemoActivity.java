@@ -1,8 +1,9 @@
-package com.emp.yjy.basedemo;
+package com.emp.yjy.basedemo.activity;
 
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.emp.yjy.basedemo.R;
 import com.emp.yjy.basedemo.base.CusBaseActivity;
 import com.emp.yjy.baselib.base.BaseActivity;
 import com.emp.yjy.baselib.utils.DensityUtils;

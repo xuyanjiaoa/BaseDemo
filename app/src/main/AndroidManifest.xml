@@ -2,10 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.emp.yjy.basedemo">
 
+    <!--    摄像头权限-->
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-feature android:name="android.hardware.camera" />
+    <!--    双屏权限-->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:name=".App"
@@ -16,7 +19,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BaseDemo">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MultiDisplayActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,22 +31,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ScanBarViewDemoActivity"
+            android:name=".activity.ScanBarViewDemoActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".CameraLensViewDemoActivity"
+            android:name=".activity.CameraLensViewDemoActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ScanViewDemoActivity"
+            android:name=".activity.ScanViewDemoActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".CameraViewDemoActivity"
+            android:name=".activity.CameraViewDemoActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".SoundPlayDemoActivity"
+            android:name=".activity.SoundPlayDemoActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ScreenAutoSizeDemoActivity"
+            android:name=".activity.ScreenAutoSizeDemoActivity"
             android:screenOrientation="portrait" />
     </application>
 
