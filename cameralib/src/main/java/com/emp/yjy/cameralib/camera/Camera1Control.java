@@ -151,18 +151,19 @@ class Camera1Control implements ICameraControl {
         setFlashMode(FLASH_MODE_OFF);
     }
 
-    @Override
-    public void resume() {
-        takingPicture.set(false);
-        if (camera == null) {
-            openCamera();
-        } else {
-            previewView.textureView.setSurfaceTextureListener(surfaceTextureListener);
-            if (previewView.textureView.isAvailable()) {
-                startPreview(false);
-            }
-        }
-    }
+//    @Deprecated
+//    @Override
+//    public void resume() {
+//        takingPicture.set(false);
+//        if (camera == null) {
+//            openCamera();
+//        } else {
+//            previewView.textureView.setSurfaceTextureListener(surfaceTextureListener);
+//            if (previewView.textureView.isAvailable()) {
+//                startPreview(false);
+//            }
+//        }
+//    }
 
     @Override
     public void takePicture(final OnTakePictureCallback onTakePictureCallback) {
@@ -218,7 +219,7 @@ class Camera1Control implements ICameraControl {
         previewView.textureView = textureView;
         previewView.setTextureView(textureView);
         displayView = previewView;
-        textureView.setSurfaceTextureListener(surfaceTextureListener);
+        //textureView.setSurfaceTextureListener(surfaceTextureListener);
     }
 
     private SurfaceTexture surfaceCache;
@@ -303,6 +304,7 @@ class Camera1Control implements ICameraControl {
             surfaceCache = surface;
             initCamera();
             updateFlashMode(flashMode);
+            LogUtils.d(TAG, "onSurfaceTextureAvailable------>");
         }
 
         @Override
@@ -311,6 +313,7 @@ class Camera1Control implements ICameraControl {
             startPreview(false);
             setPreviewCallbackImpl();
             updateFlashMode(flashMode);
+            LogUtils.d(TAG, "onSurfaceTextureSizeChanged------>");
 
         }
 
@@ -323,11 +326,13 @@ class Camera1Control implements ICameraControl {
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
             updateFlashMode(flashMode);
             setPreviewCallbackImpl();
+            LogUtils.d(TAG, "onSurfaceTextureUpdated------>");
         }
     };
 
     // 开启预览
     private void startPreview(boolean checkPermission) {
+        previewView.textureView.setSurfaceTextureListener(surfaceTextureListener);
         if (camera == null) {
             initCamera();
         } else {
@@ -507,10 +512,12 @@ class Camera1Control implements ICameraControl {
             int height = h;
             if (w < h) {
                 // 垂直模式，高度固定。
-                height = (int) (width * ratio);
+//                height = (int) (width * ratio);
+                width = (int) (width * ratio);
             } else {
                 // 水平模式，宽度固定。
-                width = (int) (height * ratio);
+//                width = (int) (height * ratio);
+                height = (int) (height * ratio);
             }
 
             int l = (getWidth() - width) / 2;
@@ -520,6 +527,7 @@ class Camera1Control implements ICameraControl {
             previewFrame.top = t;
             previewFrame.right = l + width;
             previewFrame.bottom = t + height;
+            LogUtils.d(TAG, "Preview position:" + previewFrame.left + "-" + previewFrame.top + "-" + previewFrame.right + "-" + previewFrame.bottom);
         }
 
         @Override

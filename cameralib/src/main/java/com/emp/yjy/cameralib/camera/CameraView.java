@@ -1,6 +1,3 @@
-/*
- * Copyright (C) 2017 Baidu, Inc. All Rights Reserved.
- */
 package com.emp.yjy.cameralib.camera;
 
 import android.content.Context;
@@ -18,11 +15,10 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 
 import com.emp.yjy.cameralib.Utils.ImageUtils;
+import com.emp.yjy.cameralib.Utils.LogUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.IllegalFormatFlagsException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.emp.yjy.cameralib.camera.ICameraControl.DEFAULT_FOCUS_INTERVAL;
@@ -313,5 +309,14 @@ public class CameraView extends FrameLayout {
 
             }
         }
+    }
+
+    public void setLog(boolean open) {
+        if (open) {
+            LogUtils.setLogLev(LogUtils.LEV_VERBOSE);
+        } else {
+            LogUtils.setLogLev(LogUtils.LEV_WTF);
+        }
+
     }
 }

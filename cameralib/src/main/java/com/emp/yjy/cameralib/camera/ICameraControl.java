@@ -97,7 +97,7 @@ public interface ICameraControl {
 
     void pause();
 
-    void resume();
+//    void resume();
 
 
     /**
