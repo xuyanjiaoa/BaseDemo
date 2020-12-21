@@ -9,7 +9,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.emp.yjy.cameralib.Utils.LogUtils;
+import com.emp.yjy.cameralib.Utils.CMLogUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -280,7 +280,7 @@ class Camera1Control implements ICameraControl {
                     camera = Camera.open(cameraId);
                 } catch (Throwable e) {
                     e.printStackTrace();
-                    LogUtils.e(TAG, e.getMessage());
+                    CMLogUtils.e(TAG, e.getMessage());
                     return;
                 }
 
@@ -304,7 +304,7 @@ class Camera1Control implements ICameraControl {
             surfaceCache = surface;
             initCamera();
             updateFlashMode(flashMode);
-            LogUtils.d(TAG, "onSurfaceTextureAvailable------>");
+            CMLogUtils.d(TAG, "onSurfaceTextureAvailable------>");
         }
 
         @Override
@@ -313,7 +313,7 @@ class Camera1Control implements ICameraControl {
             startPreview(false);
             setPreviewCallbackImpl();
             updateFlashMode(flashMode);
-            LogUtils.d(TAG, "onSurfaceTextureSizeChanged------>");
+            CMLogUtils.d(TAG, "onSurfaceTextureSizeChanged------>");
 
         }
 
@@ -326,7 +326,7 @@ class Camera1Control implements ICameraControl {
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
             updateFlashMode(flashMode);
             setPreviewCallbackImpl();
-            LogUtils.d(TAG, "onSurfaceTextureUpdated------>");
+            CMLogUtils.d(TAG, "onSurfaceTextureUpdated------>");
         }
     };
 
@@ -349,7 +349,7 @@ class Camera1Control implements ICameraControl {
         if (!mAutoFocus || mFocusThread != null) {
             return;
         }
-        LogUtils.d(TAG, "开启自动对焦，间隔为：" + mFocusInterVal + "ms");
+        CMLogUtils.d(TAG, "开启自动对焦，间隔为：" + mFocusInterVal + "ms");
         mFocusThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -372,7 +372,7 @@ class Camera1Control implements ICameraControl {
                         break;
                     }
                 }
-                LogUtils.d(TAG, "退出自动对焦！");
+                CMLogUtils.d(TAG, "退出自动对焦！");
             }
         });
         mFocusThread.start();
@@ -390,7 +390,7 @@ class Camera1Control implements ICameraControl {
                 camera.setParameters(parameters);
             } catch (RuntimeException e) {
                 e.printStackTrace();
-                LogUtils.e(TAG, e.getMessage());
+                CMLogUtils.e(TAG, e.getMessage());
 
             }
         }
@@ -454,7 +454,7 @@ class Camera1Control implements ICameraControl {
             camera.setParameters(parameters);
         } catch (RuntimeException e) {
             e.printStackTrace();
-            LogUtils.e(TAG, e.getMessage());
+            CMLogUtils.e(TAG, e.getMessage());
         }
 
     }
@@ -527,7 +527,7 @@ class Camera1Control implements ICameraControl {
             previewFrame.top = t;
             previewFrame.right = l + width;
             previewFrame.bottom = t + height;
-            LogUtils.d(TAG, "Preview position:" + previewFrame.left + "-" + previewFrame.top + "-" + previewFrame.right + "-" + previewFrame.bottom);
+            CMLogUtils.d(TAG, "Preview position:" + previewFrame.left + "-" + previewFrame.top + "-" + previewFrame.right + "-" + previewFrame.bottom);
         }
 
         @Override

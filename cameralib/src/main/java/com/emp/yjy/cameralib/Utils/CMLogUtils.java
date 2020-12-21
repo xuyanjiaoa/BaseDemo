@@ -8,7 +8,7 @@ import android.util.Log;
  * @author Created by LRH
  * @date 2020/9/9 14:08
  */
-public class LogUtils {
+public class CMLogUtils {
 
 
     private static final String DEFAULT_TAG = "DEFAULT_TAG";

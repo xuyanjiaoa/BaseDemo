@@ -15,7 +15,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 
 import com.emp.yjy.cameralib.Utils.ImageUtils;
-import com.emp.yjy.cameralib.Utils.LogUtils;
+import com.emp.yjy.cameralib.Utils.CMLogUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -313,9 +313,9 @@ public class CameraView extends FrameLayout {
 
     public void setLog(boolean open) {
         if (open) {
-            LogUtils.setLogLev(LogUtils.LEV_VERBOSE);
+            CMLogUtils.setLogLev(CMLogUtils.LEV_VERBOSE);
         } else {
-            LogUtils.setLogLev(LogUtils.LEV_WTF);
+            CMLogUtils.setLogLev(CMLogUtils.LEV_WTF);
         }
 
     }
