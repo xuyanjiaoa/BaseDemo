@@ -37,6 +37,7 @@ public class MultiDisplayActivity extends CusBaseActivity {
         if (displayFront != null) {
             mPageFront = new PageFront(this, displayFront);
             mPageFront.setDisplayMode(DisplayMode.ALERT);
+            mPageFront.setCancelable(false);
             mPageFront.show();
         }
 
@@ -44,6 +45,7 @@ public class MultiDisplayActivity extends CusBaseActivity {
         if (displayBack != null) {
             mPageBack = new PageBack(this, displayBack);
             mPageBack.setDisplayMode(DisplayMode.ALERT);
+            mPageBack.setCancelable(false);
             mPageBack.show();
         }
 
@@ -51,15 +53,27 @@ public class MultiDisplayActivity extends CusBaseActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            //按返回键关闭dialog
-            if (mPageFront != null) {
-                mPageFront.dismiss();
-            }
-            if (mPageBack != null) {
-                mPageBack.dismiss();
-            }
-        }
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            //按返回键关闭dialog
+//            if (mPageFront != null) {
+//                mPageFront.dismiss();
+//            }
+//            if (mPageBack != null) {
+//                mPageBack.dismiss();
+//            }
+//        }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mPageFront != null) {
+            mPageFront.dismiss();
+        }
+        if (mPageBack != null) {
+            mPageBack.dismiss();
+        }
+        super.onDestroy();
+
     }
 }
