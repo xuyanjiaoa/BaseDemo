@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.emp.yjy.basedemo">
-
-    <!--    摄像头权限-->
+    <!-- 摄像头权限 -->
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature android:name="android.hardware.camera.autofocus" />
-    <uses-feature android:name="android.hardware.camera" />
-    <!--    双屏权限-->
+    <uses-feature android:name="android.hardware.camera" /> <!-- 双屏权限 -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
@@ -19,8 +17,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BaseDemo">
         <activity
-            android:name=".activity.MultiDisplayActivity"
+            android:name=".activity.Camera2DemoActivity"
             android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activity.MultiDisplayActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.MainActivity"
             android:screenOrientation="portrait">

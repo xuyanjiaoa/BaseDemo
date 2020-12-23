@@ -54,8 +54,15 @@
            android:layout_height="wrap_content" />
 
        <Button
-           android:text="双屏适用示例"
+           android:text="双屏使用示例"
            android:id="@+id/btn_multi_display"
+           android:layout_width="match_parent"
+           android:layout_margin="5dp"
+           android:layout_height="wrap_content" />
+
+       <Button
+           android:text="Camera2使用示例"
+           android:id="@+id/btn_Camera2_demo"
            android:layout_width="match_parent"
            android:layout_margin="5dp"
            android:layout_height="wrap_content" />

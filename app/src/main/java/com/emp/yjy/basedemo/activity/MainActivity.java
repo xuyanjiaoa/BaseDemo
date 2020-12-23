@@ -21,6 +21,7 @@ public class MainActivity extends CusBaseActivity implements View.OnClickListene
     private Button mBtnScreenAutoSize;
     private Button mBtnSoundPlay;
     private Button mBtnMultiDisplay;
+    private Button mBtnCamera2Demo;
 
     @Override
     protected void initData() {
@@ -36,6 +37,7 @@ public class MainActivity extends CusBaseActivity implements View.OnClickListene
         mBtnScreenAutoSize = findViewById(R.id.screen_auto_size);
         mBtnSoundPlay = findViewById(R.id.btn_sound_play);
         mBtnMultiDisplay = findViewById(R.id.btn_multi_display);
+        mBtnCamera2Demo = findViewById(R.id.btn_Camera2_demo);
     }
 
     @Override
@@ -53,6 +55,7 @@ public class MainActivity extends CusBaseActivity implements View.OnClickListene
         mBtnScreenAutoSize.setOnClickListener(this::onClick);
         mBtnSoundPlay.setOnClickListener(this::onClick);
         mBtnMultiDisplay.setOnClickListener(this::onClick);
+        mBtnCamera2Demo.setOnClickListener(this::onClick);
     }
 
     @Override
@@ -79,6 +82,9 @@ public class MainActivity extends CusBaseActivity implements View.OnClickListene
                 break;
             case R.id.btn_multi_display:
                 jumpToActivity(MultiDisplayActivity.class);
+                break;
+            case R.id.btn_Camera2_demo:
+                jumpToActivity(Camera2DemoActivity.class);
                 break;
             default:
                 break;
