@@ -10,7 +10,7 @@ android {
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName "0.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -25,6 +25,16 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        //自定义aar输出文件名称
+        libraryVariants.all { variant ->
+            variant.outputs.all { output ->
+                def file = output.outputFile
+                file = new File(file.parent,
+                        file.name.replace(".aar", "-${defaultConfig.versionName}.aar"))
+                outputFileName = file.getName()
+
+            }
         }
     }
     compileOptions {
