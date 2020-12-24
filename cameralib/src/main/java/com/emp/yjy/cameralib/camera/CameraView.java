@@ -129,7 +129,7 @@ public class CameraView extends FrameLayout {
     }
 
 
-    private void init() {
+    protected void init() {
         cameraControl = new Camera1Control(getContext());
         displayView = cameraControl.getDisplayView();
         addView(displayView);
@@ -317,6 +317,9 @@ public class CameraView extends FrameLayout {
         } else {
             CMLogUtils.setLogLev(CMLogUtils.LEV_WTF);
         }
+    }
 
+    public void setMirror(boolean enable) {
+        cameraControl.setMirror(enable);
     }
 }

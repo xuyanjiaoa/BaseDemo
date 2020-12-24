@@ -145,8 +145,17 @@ public interface ICameraControl {
 
     /**
      * 是否自动聚焦
+     *
      * @param autoFocus
      * @param interval
      */
-    void autoFocus(boolean autoFocus,long interval);
+    void autoFocus(boolean autoFocus, long interval);
+
+
+    /**
+     * 设置预览镜像
+     *
+     * @param enable
+     */
+    void setMirror(boolean enable);
 }
