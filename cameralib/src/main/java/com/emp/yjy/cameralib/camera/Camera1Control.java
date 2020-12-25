@@ -2,6 +2,7 @@ package com.emp.yjy.cameralib.camera;
 
 import android.content.Context;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -51,6 +52,9 @@ class Camera1Control implements ICameraControl {
     private long mFocusInterVal = DEFAULT_FOCUS_INTERVAL;
     private Thread mFocusThread;
 
+    //是否镜像预览
+    private boolean isMirror = false;
+
 
     @Override
     public void setPreviewCallback(PreviewCallback callback) {
@@ -68,13 +72,18 @@ class Camera1Control implements ICameraControl {
         mFocusInterVal = focusInterval;
     }
 
+    @Override
+    public void setMirror(boolean enable) {
+        this.isMirror = enable;
+    }
+
     private void onRequestDetect(byte[] data) {
         // 相机已经关闭
         if (camera == null || data == null || optSize == null || previewView == null) {
             return;
         }
         if (detectCallback != null) {
-            detectCallback.nv21Data(data, previewView.getWidth(), previewView.getHeight(), rotation);
+            detectCallback.nv21Data(data, optSize.width, optSize.height, displayOrientation);
         }
     }
 
@@ -180,6 +189,9 @@ class Camera1Control implements ICameraControl {
             case ICameraControl.ORIENTATION_INVERT:
                 parameters.setRotation(180);
                 break;
+            default:
+                parameters.setRotation(90);
+                break;
         }
         try {
             Camera.Size picSize = getOptimalSize(camera.getParameters().getSupportedPictureSizes());
@@ -248,9 +260,9 @@ class Camera1Control implements ICameraControl {
         @Override
         public void onPreviewFrame(final byte[] data, Camera camera) {
             // 节流
-            if (previewFrameCount++ % 5 != 0) {
-                return;
-            }
+//            if (previewFrameCount++ % 5 != 0) {
+//                return;
+//            }
 
             // 在某些机型和某项项目中，某些帧的data的数据不符合nv21的格式，需要过滤，否则后续处理会导致crash
             if (data.length != parameters.getPreviewSize().width * parameters.getPreviewSize().height * 1.5) {
@@ -305,6 +317,11 @@ class Camera1Control implements ICameraControl {
             initCamera();
             updateFlashMode(flashMode);
             CMLogUtils.d(TAG, "onSurfaceTextureAvailable------>");
+
+            if (isMirror) {
+                mirror();
+            }
+
         }
 
         @Override
@@ -313,6 +330,12 @@ class Camera1Control implements ICameraControl {
             startPreview(false);
             setPreviewCallbackImpl();
             updateFlashMode(flashMode);
+
+            if (isMirror) {
+                mirror();
+            }
+
+
             CMLogUtils.d(TAG, "onSurfaceTextureSizeChanged------>");
 
         }
@@ -326,9 +349,18 @@ class Camera1Control implements ICameraControl {
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
             updateFlashMode(flashMode);
             setPreviewCallbackImpl();
-            CMLogUtils.d(TAG, "onSurfaceTextureUpdated------>");
+//            CMLogUtils.d(TAG, "onSurfaceTextureUpdated------>");
         }
     };
+
+    /**
+     * 预览镜像
+     */
+    private void mirror() {
+        Matrix mirrorMatrix = new Matrix();
+        mirrorMatrix.postScale(-1, 1, getPreviewFrame().width() / 2, 0);
+        previewView.textureView.setTransform(mirrorMatrix);
+    }
 
     // 开启预览
     private void startPreview(boolean checkPermission) {
@@ -384,7 +416,9 @@ class Camera1Control implements ICameraControl {
             optSize = getOptimalSize(camera.getParameters().getSupportedPreviewSizes());
             parameters.setPreviewSize(optSize.width, optSize.height);
             previewView.setRatio(1.0f * optSize.width / optSize.height);
-            camera.setDisplayOrientation(getSurfaceOrientation());
+            displayOrientation = getSurfaceOrientation();
+            camera.setDisplayOrientation(displayOrientation);
+
             stopPreview();
             try {
                 camera.setParameters(parameters);
@@ -483,6 +517,7 @@ class Camera1Control implements ICameraControl {
 
         private TextureView textureView;
 
+        //摄像头分辨路宽高比
         private float ratio = 0.75f;
 
         void setTextureView(TextureView textureView) {
@@ -511,13 +546,26 @@ class Camera1Control implements ICameraControl {
             int width = w;
             int height = h;
             if (w < h) {
-                // 垂直模式，高度固定。
+                //垂直模式，高度固定
 //                height = (int) (width * ratio);
-                width = (int) (width * ratio);
+
+                //强制铺满界面
+                width = (int) (height / ratio);
+                if (width < w) {
+                    height = height * w / width;
+                    width = (int) (height / ratio);
+                }
+
             } else {
                 // 水平模式，宽度固定。
 //                width = (int) (height * ratio);
-                height = (int) (height * ratio);
+                //铺满界面
+                height = (int) (width / ratio);
+
+                if (height < h) {
+                    width = width * h / height;
+                    height = (int) (width / ratio);
+                }
             }
 
             int l = (getWidth() - width) / 2;
