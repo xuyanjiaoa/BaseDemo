@@ -133,6 +133,8 @@ public class CameraView extends FrameLayout {
         cameraControl = new Camera1Control(getContext());
         displayView = cameraControl.getDisplayView();
         addView(displayView);
+        CMLogUtils.e("添加display view");
+
     }
 
     public void setFlashMode(@ICameraControl.FlashMode int flashMode) {
@@ -321,5 +323,13 @@ public class CameraView extends FrameLayout {
 
     public void setMirror(boolean enable) {
         cameraControl.setMirror(enable);
+    }
+
+    public FrameLayout getPreviewLayout() {
+        return (FrameLayout) displayView;
+    }
+
+    public Rect getPreviewFrame() {
+        return cameraControl.getPreviewFrame();
     }
 }

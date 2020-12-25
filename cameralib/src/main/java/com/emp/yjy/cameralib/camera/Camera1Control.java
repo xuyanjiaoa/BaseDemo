@@ -83,7 +83,7 @@ class Camera1Control implements ICameraControl {
             return;
         }
         if (detectCallback != null) {
-            detectCallback.nv21Data(data, parameters.getPreviewSize().width, parameters.getPreviewSize().height, rotation);
+            detectCallback.nv21Data(data, optSize.width, optSize.height, displayOrientation);
         }
     }
 
@@ -188,6 +188,9 @@ class Camera1Control implements ICameraControl {
                 break;
             case ICameraControl.ORIENTATION_INVERT:
                 parameters.setRotation(180);
+                break;
+            default:
+                parameters.setRotation(90);
                 break;
         }
         try {
@@ -413,7 +416,9 @@ class Camera1Control implements ICameraControl {
             optSize = getOptimalSize(camera.getParameters().getSupportedPreviewSizes());
             parameters.setPreviewSize(optSize.width, optSize.height);
             previewView.setRatio(1.0f * optSize.width / optSize.height);
-            camera.setDisplayOrientation(getSurfaceOrientation());
+            displayOrientation = getSurfaceOrientation();
+            camera.setDisplayOrientation(displayOrientation);
+
             stopPreview();
             try {
                 camera.setParameters(parameters);
@@ -512,6 +517,7 @@ class Camera1Control implements ICameraControl {
 
         private TextureView textureView;
 
+        //摄像头分辨路宽高比
         private float ratio = 0.75f;
 
         void setTextureView(TextureView textureView) {
@@ -541,10 +547,25 @@ class Camera1Control implements ICameraControl {
             int height = h;
             if (w < h) {
                 //垂直模式，高度固定
-                width = (int) (height * ratio);
+//                height = (int) (width * ratio);
+
+                //强制铺满界面
+                width = (int) (height / ratio);
+                if (width < w) {
+                    height = height * w / width;
+                    width = (int) (height / ratio);
+                }
+
             } else {
                 // 水平模式，宽度固定。
+//                width = (int) (height * ratio);
+                //铺满界面
                 height = (int) (width / ratio);
+
+                if (height < h) {
+                    width = width * h / height;
+                    height = (int) (width / ratio);
+                }
             }
 
             int l = (getWidth() - width) / 2;
