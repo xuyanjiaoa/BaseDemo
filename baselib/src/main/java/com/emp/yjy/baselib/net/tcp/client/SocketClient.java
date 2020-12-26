@@ -1,4 +1,4 @@
-package com.emp.yjy.baselib.net;
+package com.emp.yjy.baselib.net.tcp.client;
 
 import android.text.TextUtils;
 
