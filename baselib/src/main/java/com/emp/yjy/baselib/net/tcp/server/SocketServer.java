@@ -1,6 +1,5 @@
 package com.emp.yjy.baselib.net.tcp.server;
 
-import com.emp.yjy.baselib.base.Result;
 import com.emp.yjy.baselib.utils.LogUtils;
 import com.emp.yjy.baselib.utils.ThreadPool;
 
@@ -8,13 +7,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author linruihang
@@ -34,13 +28,17 @@ public class SocketServer implements AcceptRunnable.AcceptCallBack {
 
     private int port = 8080;
     //管理连接
-    private HashMap<Integer, SocketHandleRunnable> mMap;
+    private ConcurrentHashMap<Integer, SocketHandleRunnable> mMap;
     //最大连接数
     private int mMaxConnect = 1024;
     //可用id数组
     private List<Integer> mAvailableIdList;
     //监听器
     private SocketServerListener mSocketServerListener;
+    //读写锁
+    private Object mLock = new Object();
+    //连接存活时间（单位ms）
+    private long mSurvivalTime = 120 * 1000;
 
 
     public SocketServer(int port, SocketServerListener listener) {
@@ -60,7 +58,7 @@ public class SocketServer implements AcceptRunnable.AcceptCallBack {
             }
 
             if (mMap == null) {
-                mMap = new HashMap<>((int) (mMaxConnect / 0.75));
+                mMap = new ConcurrentHashMap<>((int) (mMaxConnect / 0.75));
             }
             if (mAvailableIdList == null) {
                 mAvailableIdList = new ArrayList<>(mMaxConnect);
@@ -141,12 +139,12 @@ public class SocketServer implements AcceptRunnable.AcceptCallBack {
             return;
         }
         if (socket != null) {
-            if (mAvailableIdList.size() <= 0) {
+            if (getAvailableConnectNum() <= 0) {
                 LogUtils.e(TAG, "连接数量已经超过最大值");
                 error("连接数量已经超过最大值");
                 return;
             }
-            Integer id = mAvailableIdList.get(mAvailableIdList.size()-1);
+            Integer id = getSocketIdFromCache();
             SocketHandleRunnable handleRunnable = new SocketHandleRunnable(true, socket, id, new SocketHandleRunnable.AcceptMsgCallBack() {
                 @Override
                 public void accept(int id, byte[] data) {
@@ -159,13 +157,72 @@ public class SocketServer implements AcceptRunnable.AcceptCallBack {
                 public void error(String errMsg) {
                     sendError(errMsg);
                 }
+
+                @Override
+                public void exit(int id) {
+                    SocketHandleRunnable remove = mMap.remove(id);
+                    if (remove != null) {
+                        addSocketIdToCache(id);
+                        remove = null;
+                    }
+                    LogUtils.i(TAG, "释放id为" + id + "连接");
+
+                }
             });
-            mAvailableIdList.remove(mAvailableIdList.size()-1);
+            handleRunnable.setSurvivalTime(mSurvivalTime);
+            deleteSockIdFromCache();
             mThreadPool.execute(handleRunnable);
             mMap.put(id, handleRunnable);
+            LogUtils.i(TAG, "新连接：" + id);
             LogUtils.i(TAG, "当前连接数量：" + mMap.size());
         }
     }
+
+    /**
+     * 从缓存中获取id，分配给连接
+     *
+     * @return
+     */
+    private int getSocketIdFromCache() {
+        synchronized (mLock) {
+            return mAvailableIdList.get(mAvailableIdList.size() - 1);
+        }
+
+    }
+
+    /**
+     * 将id添加到缓存中，因为有些连接已经释放
+     *
+     * @param id
+     */
+    private void addSocketIdToCache(int id) {
+        synchronized (mLock) {
+            mAvailableIdList.add(id);
+        }
+    }
+
+    /**
+     * 从缓存中移除id，id已经分配给连接
+     *
+     * @return
+     */
+    private int deleteSockIdFromCache() {
+        synchronized (mLock) {
+            return mAvailableIdList.remove(mAvailableIdList.size() - 1);
+        }
+    }
+
+    /**
+     * 获取可用连接个数
+     *
+     * @return
+     */
+    private int getAvailableConnectNum() {
+        synchronized (mLock) {
+            return mAvailableIdList.size();
+        }
+    }
+
 
     /**
      * 客户端连接错误信息
@@ -185,5 +242,13 @@ public class SocketServer implements AcceptRunnable.AcceptCallBack {
 
     public void setMaxConnect(int maxConnect) {
         mMaxConnect = maxConnect;
+    }
+
+    public long getSurvivalTime() {
+        return mSurvivalTime;
+    }
+
+    public void setSurvivalTime(long survivalTime) {
+        mSurvivalTime = survivalTime;
     }
 }

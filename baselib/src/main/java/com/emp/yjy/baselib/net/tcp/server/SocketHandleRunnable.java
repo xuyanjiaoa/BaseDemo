@@ -33,6 +33,8 @@ class SocketHandleRunnable implements Runnable {
     private AcceptMsgCallBack mAcceptCallBack;
     //socket id
     private int mid;
+    //最后一次接收数据的时间
+    private long mLastAcceptDataTime;
 
     public SocketHandleRunnable(boolean isAlive, Socket socket, int id, AcceptMsgCallBack callBack) {
         this.isAlive = isAlive;
@@ -44,19 +46,25 @@ class SocketHandleRunnable implements Runnable {
 
     @Override
     public void run() {
+        mLastAcceptDataTime = System.currentTimeMillis();
         while (isAlive) {
             try {
+                if (System.currentTimeMillis() - mLastAcceptDataTime > mSurvivalTime) {
+                    break;
+                }
                 InputStream inputStream = mSocket.getInputStream();
                 if (inputStream == null) {
                     break;
                 }
                 if (inputStream.available() > 0) {
+                    mLastAcceptDataTime = System.currentTimeMillis();
                     int readNum = inputStream.read(mBuffer);
                     if (readNum > 0) {
                         byte[] data = new byte[readNum];
                         System.arraycopy(mBuffer, 0, data, 0, readNum);
+
                         if (mAcceptCallBack != null) {
-                            mAcceptCallBack.accept(mid,data);
+                            mAcceptCallBack.accept(mid, data);
                         }
                     }
                 }
@@ -76,6 +84,9 @@ class SocketHandleRunnable implements Runnable {
             }
         }
         LogUtils.i(TAG, "SocketHandleRunnable exit!");
+        if (mAcceptCallBack != null) {
+            mAcceptCallBack.exit(mid);
+        }
 
     }
 
@@ -83,6 +94,13 @@ class SocketHandleRunnable implements Runnable {
         isAlive = false;
     }
 
+    public long getSurvivalTime() {
+        return mSurvivalTime;
+    }
+
+    public void setSurvivalTime(long survivalTime) {
+        mSurvivalTime = survivalTime;
+    }
 
     public interface AcceptMsgCallBack {
         /**
@@ -98,6 +116,13 @@ class SocketHandleRunnable implements Runnable {
          * @param errMsg
          */
         void error(String errMsg);
+
+        /**
+         * 退出
+         *
+         * @param id
+         */
+        void exit(int id);
 
     }
 }
