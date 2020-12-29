@@ -8,14 +8,12 @@ import java.net.Socket;
 
 /**
  * @author linruihang
- * @description:
+ * @description: 监听socket客户端连接
  * @date :2020/12/26 19:55
  */
 public class AcceptRunnable implements Runnable {
     private boolean isExit = false;
     private ServerSocket mServerSocket;
-    //缓存
-    private byte[] mBuffer;
     private AcceptCallBack mAcceptCallBack;
 
     public AcceptRunnable(boolean isExit, ServerSocket serverSocket, AcceptCallBack callBack) throws IOException {
@@ -28,9 +26,9 @@ public class AcceptRunnable implements Runnable {
     public void run() {
         while (!isExit) {
             try {
-                Socket accept = mServerSocket.accept();
+                Socket socket = mServerSocket.accept();
                 if (mAcceptCallBack != null) {
-                    mAcceptCallBack.connect(accept);
+                    mAcceptCallBack.connect(socket);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -40,7 +38,7 @@ public class AcceptRunnable implements Runnable {
                 break;
 
             }
-            SystemClock.sleep(1);
+//            SystemClock.sleep(1);
         }
     }
 
@@ -54,15 +52,17 @@ public class AcceptRunnable implements Runnable {
     /**
      * socket连接监听
      */
-    interface AcceptCallBack{
+    interface AcceptCallBack {
         /**
          * 链接
+         *
          * @param socket
          */
         void connect(Socket socket);
 
         /**
          * 错误
+         *
          * @param errMsg
          */
         void error(String errMsg);

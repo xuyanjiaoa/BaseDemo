@@ -1,9 +1,12 @@
 package com.emp.yjy.baselib.net.tcp.server;
 
+import com.emp.yjy.baselib.base.Result;
 import com.emp.yjy.baselib.utils.LogUtils;
 import com.emp.yjy.baselib.utils.ThreadPool;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -90,14 +93,15 @@ public class SocketServer implements AcceptRunnable.AcceptCallBack {
     /**
      * 启动
      */
-    public void start() {
+    public boolean start() {
         boolean succ = initParam();
         if (!succ) {
-            return;
+            return succ;
         }
         mThreadPool.execute(mAcceptRunnable);
         isStart = true;
         LogUtils.d(TAG, "SocketServer start!");
+        return true;
     }
 
     /**
@@ -106,6 +110,7 @@ public class SocketServer implements AcceptRunnable.AcceptCallBack {
     public void stop() {
         if (mAcceptRunnable != null) {
             mAcceptRunnable.exit();
+            mAcceptRunnable = null;
         }
         if (mServerSocket != null) {
             try {
@@ -113,14 +118,17 @@ public class SocketServer implements AcceptRunnable.AcceptCallBack {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            mServerSocket = null;
         }
         if (mMap != null) {
             for (SocketHandleRunnable runnable : mMap.values()) {
                 runnable.exit();
             }
+            mMap.clear();
         }
         if (mThreadPool != null) {
             mThreadPool.shutDown();
+            mThreadPool = null;
         }
         isStart = false;
         LogUtils.d(TAG, "SocketServer stop!");
@@ -140,6 +148,18 @@ public class SocketServer implements AcceptRunnable.AcceptCallBack {
         }
         if (socket != null) {
             if (getAvailableConnectNum() <= 0) {
+                try {
+                    socket.shutdownInput();
+                    socket.shutdownOutput();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
                 LogUtils.e(TAG, "连接数量已经超过最大值");
                 error("连接数量已经超过最大值");
                 return;
@@ -147,9 +167,9 @@ public class SocketServer implements AcceptRunnable.AcceptCallBack {
             Integer id = getSocketIdFromCache();
             SocketHandleRunnable handleRunnable = new SocketHandleRunnable(true, socket, id, new SocketHandleRunnable.AcceptMsgCallBack() {
                 @Override
-                public void accept(int id, byte[] data) {
+                public void accept(int id, byte[] data, Socket socket) {
                     if (mSocketServerListener != null) {
-                        mSocketServerListener.dataAccept(id, data);
+                        mSocketServerListener.dataAccept(id, data, socket);
                     }
                 }
 
@@ -223,6 +243,51 @@ public class SocketServer implements AcceptRunnable.AcceptCallBack {
         }
     }
 
+    /**
+     * 发送数据给客户端
+     *
+     * @param clientId 客户端id
+     * @param bytes    数据
+     * @return
+     */
+    public Result<Object> send2Client(int clientId, byte[] bytes) {
+        Result<Object> result = new Result();
+        if (bytes == null || bytes.length <= 0) {
+            result.setCode(-1);
+            result.setMsg("参数错误");
+            return result;
+        }
+        SocketHandleRunnable socketHandleRunnable = mMap.get(clientId);
+        if (socketHandleRunnable == null) {
+            result.setCode(-2);
+            result.setMsg("未知的客户端id");
+            return result;
+        }
+        Socket socket = socketHandleRunnable.getSocket();
+        if (socket == null) {
+            result.setCode(-3);
+            result.setMsg("连接已断开，发送失败！");
+            return result;
+        }
+        synchronized (this) {
+            OutputStream outputStream = null;
+            try {
+                outputStream = socket.getOutputStream();
+                outputStream.write(bytes);
+                outputStream.flush();
+                outputStream.close();
+                result.setCode(0);
+                result.setMsg("成功");
+                return result;
+            } catch (IOException e) {
+                e.printStackTrace();
+                result.setCode(-4);
+                result.setMsg(e.getMessage());
+                return result;
+            }
+        }
+    }
+
 
     /**
      * 客户端连接错误信息
@@ -251,4 +316,14 @@ public class SocketServer implements AcceptRunnable.AcceptCallBack {
     public void setSurvivalTime(long survivalTime) {
         mSurvivalTime = survivalTime;
     }
+
+    public boolean isStart() {
+        return isStart;
+    }
+
+    public void setStart(boolean start) {
+        isStart = start;
+    }
+
+
 }

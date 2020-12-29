@@ -41,7 +41,6 @@ class SocketHandleRunnable implements Runnable {
         mSocket = socket;
         mAcceptCallBack = callBack;
         mid = id;
-        mBuffer = new byte[mBufferSize];
     }
 
     @Override
@@ -54,9 +53,15 @@ class SocketHandleRunnable implements Runnable {
                 }
                 InputStream inputStream = mSocket.getInputStream();
                 if (inputStream == null) {
+                    if (mAcceptCallBack != null) {
+                        mAcceptCallBack.error("socket inputStream is null!");
+                    }
                     break;
                 }
                 if (inputStream.available() > 0) {
+                    if (mBuffer == null) {
+                        mBuffer = new byte[mBufferSize];
+                    }
                     mLastAcceptDataTime = System.currentTimeMillis();
                     int readNum = inputStream.read(mBuffer);
                     if (readNum > 0) {
@@ -64,15 +69,12 @@ class SocketHandleRunnable implements Runnable {
                         System.arraycopy(mBuffer, 0, data, 0, readNum);
 
                         if (mAcceptCallBack != null) {
-                            mAcceptCallBack.accept(mid, data);
+                            mAcceptCallBack.accept(mid, data, mSocket);
                         }
                     }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
-                if (mAcceptCallBack != null) {
-                    mAcceptCallBack.error(e.getMessage());
-                }
+                //ignore
             }
             SystemClock.sleep(1);
         }
@@ -82,6 +84,7 @@ class SocketHandleRunnable implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            mSocket = null;
         }
         LogUtils.i(TAG, "SocketHandleRunnable exit!");
         if (mAcceptCallBack != null) {
@@ -102,13 +105,17 @@ class SocketHandleRunnable implements Runnable {
         mSurvivalTime = survivalTime;
     }
 
+    public Socket getSocket() {
+        return mSocket;
+    }
+
     public interface AcceptMsgCallBack {
         /**
          * 接收到数据
          *
          * @param data
          */
-        void accept(int id, byte[] data);
+        void accept(int id, byte[] data, Socket socket);
 
         /**
          * 错误

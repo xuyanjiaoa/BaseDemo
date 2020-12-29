@@ -1,5 +1,7 @@
 package com.emp.yjy.baselib.net.tcp.server;
 
+import java.net.Socket;
+
 /**
  * @author linruihang
  * @description: SocketServer数据及状态监听
@@ -13,7 +15,7 @@ public interface SocketServerListener {
      * @param id
      * @param data
      */
-    void dataAccept(int id, byte[] data);
+    void dataAccept(int id, byte[] data, Socket socket);
 
     /**
      * 、

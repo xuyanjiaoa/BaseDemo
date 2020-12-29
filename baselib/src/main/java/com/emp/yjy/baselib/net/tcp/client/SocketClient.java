@@ -12,6 +12,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
+ *SocketClient封装
  * @author Created by LRH
  * @date 2020/12/25 15:00
  */
@@ -45,7 +46,6 @@ public class SocketClient {
         }
         mIp = ip;
         mPort = port;
-        mSocket = new Socket();
     }
 
     /**
@@ -54,7 +54,10 @@ public class SocketClient {
      * @return
      */
     public Result<Object> connect() {
-        Result<Object> result = new Result<Object>();
+        if (mSocket == null) {
+            mSocket = new Socket();
+        }
+        Result<Object> result = new Result<>();
         InetSocketAddress inetSocketAddress = new InetSocketAddress(this.mIp, this.mPort);
         try {
             mSocket.connect(inetSocketAddress, mConnectTimeOut);
@@ -81,8 +84,8 @@ public class SocketClient {
                 if (mSocket.isConnected()) {
                     mSocket.shutdownInput();
                     mSocket.shutdownOutput();
-                    mSocket.close();
                 }
+                mSocket.close();
             } catch (IOException ioException) {
                 ioException.printStackTrace();
                 LogUtils.e(TAG, ioException.getMessage());
@@ -101,15 +104,7 @@ public class SocketClient {
         if (mSocket == null) {
             return connect();
         }
-        if (mSocket.isConnected()) {
-            try {
-                mSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                releaseSocket();
-            }
-        }
-        mSocket = null;
+        releaseSocket();
         return connect();
     }
 
@@ -166,18 +161,18 @@ public class SocketClient {
     public Result<byte[]> receive(int start, int end) {
         Result<byte[]> result = new Result<>();
 
+        if (mSocket == null) {
+            result.setCode(ResultCode.SOCKET_NULL);
+            result.setMsg(ResultCode.SOCKET_NULL_MSG);
+            return result;
+        }
+
         if (start >= end) {
             result.setCode(ResultCode.PARAMETER_ERROR);
             result.setMsg(ResultCode.PARAMETER_ERROR_MSG);
             return result;
         }
 
-
-        if (mSocket == null) {
-            result.setCode(ResultCode.SOCKET_NULL);
-            result.setMsg(ResultCode.SOCKET_NULL_MSG);
-            return result;
-        }
         if (!mSocket.isConnected()) {
             result.setCode(ResultCode.SOCKET_NOT_CONNECTED);
             result.setMsg(ResultCode.SOCKET_NOT_CONNECTED_MSG);
@@ -216,6 +211,86 @@ public class SocketClient {
                     result.setCode(ResultCode.RESULT_OK);
                     result.setMsg(ResultCode.RESULT_OK_MSG);
                     result.setData(data);
+                    return result;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                result.setCode(ResultCode.RESULT_FAIL);
+                result.setMsg(e.getMessage());
+                break;
+            }
+        } while (System.currentTimeMillis() - startReadTime >= 0 && System.currentTimeMillis() - startReadTime < mRevTimeOut);
+        result.setCode(-1);
+        result.setMsg("");
+        return result;
+    }
+
+
+    /**
+     * 接收
+     *
+     * @param start
+     * @param end
+     * @return
+     */
+    public Result<Integer> receive(byte[] data,int start, int end) {
+        Result<Integer> result = new Result<>();
+
+
+        if (mSocket == null) {
+            result.setCode(ResultCode.SOCKET_NULL);
+            result.setMsg(ResultCode.SOCKET_NULL_MSG);
+            return result;
+        }
+
+        if (start >= end) {
+            result.setCode(ResultCode.PARAMETER_ERROR);
+            result.setMsg(ResultCode.PARAMETER_ERROR_MSG);
+            return result;
+        }
+
+        if (data == null || data.length < (end - start)) {
+            result.setCode(ResultCode.PARAMETER_ERROR);
+            result.setMsg(ResultCode.PARAMETER_ERROR_MSG);
+            return result;
+        }
+
+        if (!mSocket.isConnected()) {
+            result.setCode(ResultCode.SOCKET_NOT_CONNECTED);
+            result.setMsg(ResultCode.SOCKET_NOT_CONNECTED_MSG);
+            return result;
+        }
+
+        InputStream inputStream = null;
+        try {
+            inputStream = mSocket.getInputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+            //ignore
+            LogUtils.e(TAG, e.getMessage());
+        }
+        if (inputStream == null) {
+            result.setCode(ResultCode.INPUT_STREAM_NULL);
+            result.setMsg(ResultCode.INPUT_STREAM_NULL_MSG);
+            return result;
+        }
+
+        long startReadTime = System.currentTimeMillis();
+        int offset = 0;
+        if (mBuffer == null) {
+            mBuffer = new byte[mBufferSize];
+        }
+        do {
+            int readByteNum;
+            try {
+                if (inputStream.available() > 0 && (readByteNum = inputStream.read(mBuffer, offset, end - offset)) > 0) {
+                    offset += readByteNum;
+                }
+                if (offset >= end) {
+                    System.arraycopy(mBuffer, start, data, 0, end - start);
+                    result.setCode(ResultCode.RESULT_OK);
+                    result.setMsg(ResultCode.RESULT_OK_MSG);
+                    result.setData(offset);
                     break;
                 }
             } catch (IOException e) {
