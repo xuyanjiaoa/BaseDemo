@@ -54,6 +54,9 @@ class Camera1Control implements ICameraControl {
 
     //是否镜像预览
     private boolean isMirror = false;
+    //预览宽度和高度
+    private int mPreviewWidth = 0;
+    private int mPreviewHeight = 0;
 
 
     @Override
@@ -412,7 +415,17 @@ class Camera1Control implements ICameraControl {
     }
 
     private void opPreviewSize(int width, int height) {
-        if (parameters != null && camera != null && width > 0 && height > 0) {
+        CMLogUtils.d(TAG, "opPreviewSize------>" + width + "  " + height);
+        if (width <= 0 || height <= 0) {
+            return;
+        }
+        if (mPreviewHeight == height && mPreviewWidth == width) {
+            return;
+        }
+        mPreviewHeight = height;
+        mPreviewWidth = width;
+
+        if (parameters != null && camera != null) {
             optSize = getOptimalSize(camera.getParameters().getSupportedPreviewSizes());
             parameters.setPreviewSize(optSize.width, optSize.height);
             previewView.setRatio(1.0f * optSize.width / optSize.height);
