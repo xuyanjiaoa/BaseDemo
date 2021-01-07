@@ -10,7 +10,9 @@ public enum DisplayType {
     //主屏
     FRONT(0),
     //副屏
-    BACK(1);
+    BACK(1),
+    //未知
+    UNKNOWN(-1);
 
     private final int mType;
 

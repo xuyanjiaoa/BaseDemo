@@ -7,8 +7,6 @@ import android.content.Context;
 import android.hardware.display.DisplayManager;
 import android.view.Display;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 /**
  * @author Created by LRH
  * @date 2020/11/18 11:32
@@ -16,7 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
  */
 public class MultiDisplay extends Presentation {
     private Activity mActivity;
-    private MultiDisplayStatus mStatus = MultiDisplayStatus.DISMISS;
+    private MultiDisplayStatus mStatus = MultiDisplayStatus.INITIALIZATION;
+    private MultiDisplayStatusListener mStatusListener;
+    private DisplayType mDisplayType;
+
 
     public int getDisplayMode() {
         return mDisplayMode;
@@ -32,6 +33,14 @@ public class MultiDisplay extends Presentation {
     public MultiDisplay(Activity activity, Display display) {
         super(activity, display);
         this.mActivity = activity;
+        int displayId = display.getDisplayId();
+        if (displayId == 0) {
+            mDisplayType = DisplayType.FRONT;
+        } else if (displayId == 1) {
+            mDisplayType = DisplayType.BACK;
+        } else {
+            mDisplayType = DisplayType.UNKNOWN;
+        }
     }
 
     @SuppressLint("WrongConstant")
@@ -55,13 +64,30 @@ public class MultiDisplay extends Presentation {
         super.show();
         onShow();
         mStatus = MultiDisplayStatus.SHOW;
+        dispatchStatus(mStatus);
     }
 
-//    @Override
-//    public void cancel() {
-//        super.cancel();
-//        onCancel();
-//    }
+    /**
+     * 状态分发
+     * @param status
+     */
+    private void dispatchStatus(MultiDisplayStatus status) {
+        if (mStatusListener != null) {
+            mStatusListener.status(this,status);
+        }
+    }
+
+    public DisplayType getDisplayType() {
+        return mDisplayType;
+    }
+
+    @Override
+    public void cancel() {
+        super.cancel();
+        onCancel();
+        mStatus = MultiDisplayStatus.CANCEL;
+        dispatchStatus(mStatus);
+    }
 
 
     @Override
@@ -69,6 +95,7 @@ public class MultiDisplay extends Presentation {
         super.dismiss();
         onDismiss();
         mStatus = MultiDisplayStatus.DISMISS;
+        dispatchStatus(mStatus);
     }
 
     protected void onDismiss() {
@@ -84,6 +111,10 @@ public class MultiDisplay extends Presentation {
 
     }
 
+    protected void onCancel() {
+
+    }
+
     /**
      * 获取ActivityDisplay当前显示状态
      *
@@ -93,5 +124,11 @@ public class MultiDisplay extends Presentation {
         return mStatus;
     }
 
+    public MultiDisplayStatusListener getStatusListener() {
+        return mStatusListener;
+    }
 
+    public void setStatusListener(MultiDisplayStatusListener statusListener) {
+        mStatusListener = statusListener;
+    }
 }
