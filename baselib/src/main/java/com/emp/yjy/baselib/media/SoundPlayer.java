@@ -37,6 +37,8 @@ public final class SoundPlayer {
     private int mSoundPriority = DEFAULT_SOUND_PRIORITY;
     //播放速率（0.5-2.0），越小播放速度越快
     private float mRate = DEFAULT_PLAY_RATE;
+    //最后流id
+    private int mLastStreamId = 0;
 
 
     public SoundPlayer(Context context) {
@@ -79,11 +81,22 @@ public final class SoundPlayer {
      * @return true:播放成功
      * false：播放失败
      */
-    public boolean play(int resId) {
+    public int play(int resId) {
         int soundId = mSoundIdMap.get(resId);
         int playRet = mSoundPool.play(soundId, mVolume, mVolume, mSoundPriority, DEFAULT_PLAY_LOOP, mRate);
-        return playRet != 0;
+        return playRet;
     }
+
+    /**
+     * 停止播放声音
+     *
+     * @param soundId
+     */
+    public void stop(int soundId) {
+
+        mSoundPool.stop(soundId);
+    }
+
 
     /**
      * 资源释放
@@ -172,4 +185,6 @@ public final class SoundPlayer {
         }
         return this;
     }
+
+
 }
