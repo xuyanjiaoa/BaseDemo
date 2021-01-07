@@ -100,6 +100,7 @@
 -keep class com.emp.yjy.baselib.base.*{*;}
 -keep class com.emp.yjy.baselib.**{
     public *;
+    protected *;
 }
 
 # 指定外部模糊字典 proguard-chinese.txt 改为混淆文件名，下同
