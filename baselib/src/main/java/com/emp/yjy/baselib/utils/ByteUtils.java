@@ -20,10 +20,10 @@ public class ByteUtils {
      */
     public static byte[] int2Byte(int value) {
         return new byte[]{
-                (byte) ((value >> 24) & 0xFF),
-                (byte) ((value >> 16) & 0xFF),
+                (byte) (value & 0xFF),
                 (byte) ((value >> 8) & 0xFF),
-                (byte) (value & 0xFF)
+                (byte) ((value >> 16) & 0xFF),
+                (byte) ((value >> 24) & 0xFF)
         };
     }
 
@@ -61,10 +61,11 @@ public class ByteUtils {
      * @return int数值
      */
     public static int bytes2Int(byte[] b) {
-        return b[3] & 0xFF |
-                (b[2] & 0xFF) << 8 |
-                (b[1] & 0xFF) << 16 |
-                (b[0] & 0xFF) << 24;
+        return b[0] & 0xFF |
+                (b[1] & 0xFF) << 8 |
+                (b[2] & 0xFF) << 16 |
+                (b[3] & 0xFF) << 24;
+
     }
 
 
@@ -75,8 +76,8 @@ public class ByteUtils {
      * @return
      */
     public static short bytes2Short(byte[] bytes) {
-        short s0 = (short) ((bytes[0] & 0xff) << 8);
-        short s1 = (short) ((bytes[1] & 0xff));
+        short s0 = (short) ((bytes[0] & 0xff));
+        short s1 = (short) ((bytes[1] & 0xff)<<8);
         return (short) (s0 | s1);
 
     }
