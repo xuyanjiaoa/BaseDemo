@@ -13,12 +13,12 @@ public class ByteUtils {
 
 
     /**
-     * 将int转化为byte[],大端模式
+     * 将int转化为byte[],小端模式
      *
      * @param value
      * @return
      */
-    public static byte[] int2Byte(int value) {
+    public static byte[] int2ByteS(int value) {
         return new byte[]{
                 (byte) (value & 0xFF),
                 (byte) ((value >> 8) & 0xFF),
@@ -28,15 +28,43 @@ public class ByteUtils {
     }
 
     /**
+     * 将int转化为byte[],大端模式
+     *
+     * @param value
+     * @return
+     */
+    public static byte[] int2ByteB(int value) {
+        return new byte[]{
+                (byte) ((value >> 24) & 0xFF),
+                (byte) ((value >> 16) & 0xFF),
+                (byte) ((value >> 8) & 0xFF),
+                (byte) (value & 0xFF)
+        };
+    }
+
+    /**
+     * 将short转化为byte[](小端模式)
+     *
+     * @param value
+     * @return
+     */
+    public static byte[] short2ByteS(short value) {
+        return new byte[]{
+                (byte) (value & 0xff),
+                (byte) ((value >> 8) & 0xff)
+        };
+    }
+
+    /**
      * 将short转化为byte[](大端模式)
      *
      * @param value
      * @return
      */
-    public static byte[] short2Byte(short value) {
+    public static byte[] short2ByteB(short value) {
         return new byte[]{
-                (byte) (value & 0xff),
-                (byte) ((value >> 8) & 0xff)
+                (byte) ((value >> 8) & 0xff),
+                (byte) (value & 0xff)
         };
     }
 
@@ -55,12 +83,12 @@ public class ByteUtils {
 
 
     /**
-     * 大端模式字节数组中转整型数值，本方法适用于(低位在前，高位在后)的顺序。
+     * 字节数组转整型数值（小端模式）
      *
      * @param b byte数组，长度为4
      * @return int数值
      */
-    public static int bytes2Int(byte[] b) {
+    public static int bytes2IntS(byte[] b) {
         return b[0] & 0xFF |
                 (b[1] & 0xFF) << 8 |
                 (b[2] & 0xFF) << 16 |
@@ -68,6 +96,32 @@ public class ByteUtils {
 
     }
 
+    /**
+     * 大端模式字节数组中转整型数值，本方法适用于(低位在前，高位在后)的顺序。
+     *
+     * @param b byte数组，长度为4
+     * @return int数值
+     */
+    public static int bytes2IntB(byte[] b) {
+        return b[3] & 0xFF |
+                (b[2] & 0xFF) << 8 |
+                (b[1] & 0xFF) << 16 |
+                (b[0] & 0xFF) << 24;
+    }
+
+
+    /**
+     * 小端模式byte[]到short的转换
+     *
+     * @param bytes 字节数组，长度必须为两个字节
+     * @return
+     */
+    public static short bytes2ShortS(byte[] bytes) {
+        short s0 = (short) ((bytes[0] & 0xff));
+        short s1 = (short) ((bytes[1] & 0xff)<<8);
+        return (short) (s0 | s1);
+
+    }
 
     /**
      * 大端模式byte[]到short的转换
@@ -75,9 +129,9 @@ public class ByteUtils {
      * @param bytes 字节数组，长度必须为两个字节
      * @return
      */
-    public static short bytes2Short(byte[] bytes) {
-        short s0 = (short) ((bytes[0] & 0xff));
-        short s1 = (short) ((bytes[1] & 0xff)<<8);
+    public static short bytes2ShortB(byte[] bytes) {
+        short s0 = (short) ((bytes[0] & 0xff) << 8);
+        short s1 = (short) ((bytes[1] & 0xff));
         return (short) (s0 | s1);
 
     }
