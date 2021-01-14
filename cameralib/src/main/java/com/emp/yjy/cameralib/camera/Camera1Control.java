@@ -6,6 +6,8 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -13,6 +15,7 @@ import android.widget.FrameLayout;
 import com.emp.yjy.cameralib.Utils.CMLogUtils;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -58,6 +61,9 @@ class Camera1Control implements ICameraControl {
     private int mPreviewWidth = 0;
     private int mPreviewHeight = 0;
 
+    //是否异步打开摄像头
+    private boolean mOpenCameraAsync = false;
+
 
     @Override
     public void setPreviewCallback(PreviewCallback callback) {
@@ -78,6 +84,15 @@ class Camera1Control implements ICameraControl {
     @Override
     public void setMirror(boolean enable) {
         this.isMirror = enable;
+    }
+
+    /**
+     * 异步开启摄像头
+     */
+    @Override
+    public void startAsync() {
+        mOpenCameraAsync = true;
+        startPreview(false);
     }
 
     private void onRequestDetect(byte[] data) {
@@ -281,6 +296,53 @@ class Camera1Control implements ICameraControl {
     };
 
 
+    private void initCameraAsync(initCameraListener listener) {
+        if (camera == null) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+                    for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
+                        Camera.getCameraInfo(i, cameraInfo);
+                        if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                            cameraId = i;
+                        }
+                    }
+                    try {
+                        camera = Camera.open(cameraId);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                        CMLogUtils.e(TAG, e.getMessage());
+                        return;
+                    }
+                    if (parameters == null) {
+                        parameters = camera.getParameters();
+                        parameters.setPreviewFormat(ImageFormat.NV21);
+                    }
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                opPreviewSize(previewView.getWidth(), previewView.getHeight());
+                                camera.setPreviewTexture(surfaceCache);
+                                setPreviewCallbackImpl();
+                                startPreview(false);
+                                if (listener != null) {
+                                    listener.initFinish();
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            }).start();
+
+
+        }
+    }
+
     private void initCamera() {
         try {
             if (camera == null) {
@@ -317,13 +379,28 @@ class Camera1Control implements ICameraControl {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             surfaceCache = surface;
-            initCamera();
-            updateFlashMode(flashMode);
-            CMLogUtils.d(TAG, "onSurfaceTextureAvailable------>");
+            if (mOpenCameraAsync) {
+                initCameraAsync(new initCameraListener() {
+                    @Override
+                    public void initFinish() {
+                        updateFlashMode(flashMode);
+                        CMLogUtils.d(TAG, "onSurfaceTextureAvailable------>");
 
-            if (isMirror) {
-                mirror();
+                        if (isMirror) {
+                            mirror();
+                        }
+                    }
+                });
+            } else {
+                initCamera();
+                updateFlashMode(flashMode);
+                CMLogUtils.d(TAG, "onSurfaceTextureAvailable------>");
+                if (isMirror) {
+                    mirror();
+                }
             }
+
+
 
         }
 
@@ -369,7 +446,11 @@ class Camera1Control implements ICameraControl {
     private void startPreview(boolean checkPermission) {
         previewView.textureView.setSurfaceTextureListener(surfaceTextureListener);
         if (camera == null) {
-            initCamera();
+            if (mOpenCameraAsync) {
+                initCameraAsync(null);
+            } else {
+                initCamera();
+            }
         } else {
             camera.startPreview();
             startAutoFocus();
@@ -601,5 +682,10 @@ class Camera1Control implements ICameraControl {
     @Override
     public Rect getPreviewFrame() {
         return previewFrame;
+    }
+
+
+    interface initCameraListener {
+        void initFinish();
     }
 }

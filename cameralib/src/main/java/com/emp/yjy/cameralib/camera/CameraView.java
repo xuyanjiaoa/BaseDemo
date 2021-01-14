@@ -106,6 +106,13 @@ public class CameraView extends FrameLayout {
         setKeepScreenOn(true);
     }
 
+    public void startAsync() {
+        cameraControl.startAsync();
+        setKeepScreenOn(true);
+    }
+
+
+
     public void stop() {
         cameraControl.stop();
         setKeepScreenOn(false);

@@ -158,4 +158,9 @@ public interface ICameraControl {
      * @param enable
      */
     void setMirror(boolean enable);
+
+    /**
+     * 异步开启摄像头
+     */
+    void startAsync();
 }
