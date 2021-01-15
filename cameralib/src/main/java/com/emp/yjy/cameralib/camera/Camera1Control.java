@@ -401,18 +401,40 @@ class Camera1Control implements ICameraControl {
             }
 
 
-
         }
 
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
             opPreviewSize(previewView.getWidth(), previewView.getHeight());
-            startPreview(false);
-            setPreviewCallbackImpl();
-            updateFlashMode(flashMode);
-
-            if (isMirror) {
-                mirror();
+            previewView.textureView.setSurfaceTextureListener(surfaceTextureListener);
+            if (camera == null) {
+                if (mOpenCameraAsync) {
+                    initCameraAsync(new initCameraListener() {
+                        @Override
+                        public void initFinish() {
+                            setPreviewCallbackImpl();
+                            updateFlashMode(flashMode);
+                            if (isMirror) {
+                                mirror();
+                            }
+                        }
+                    });
+                } else {
+                    initCamera();
+                    setPreviewCallbackImpl();
+                    updateFlashMode(flashMode);
+                    if (isMirror) {
+                        mirror();
+                    }
+                }
+            } else {
+                camera.startPreview();
+                startAutoFocus();
+                setPreviewCallbackImpl();
+                updateFlashMode(flashMode);
+                if (isMirror) {
+                    mirror();
+                }
             }
 
 
