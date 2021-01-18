@@ -13,33 +13,31 @@ import androidx.appcompat.widget.AppCompatTextView;
 
 /**
  * @author linruihang
- * @description: 无限横向滑动TextView
+ * @description: 横向来回滑动TextView
  * @date :2021/1/15 20:55
- * @deprecated
  */
-public class HorizontalTextView extends AppCompatTextView implements View.OnClickListener {
-    public final static String TAG = HorizontalTextView.class.getSimpleName();
+public class AutoHorizontalScrollTextView extends AppCompatTextView implements View.OnClickListener {
+    public final static String TAG = AutoHorizontalScrollTextView.class.getSimpleName();
     private float textLength = 0f;//文本长度
     private float viewWidth = 0f;
     private float step = 0f;//文字的横坐标
     private float y = 0f;//文字的纵坐标
-    private float temp_view_plus_text_length = 0.0f;//用于计算的临时变量
-    private float temp_view_plus_two_text_length = 0.0f;//用于计算的临时变量
     public boolean isStarting = false;//是否开始滚动
     private Paint paint = null;//绘图样式
     private String text = "";//文本内容
+    private float mStepwidth = 0.1f;
 
-    public HorizontalTextView(Context context) {
+    public AutoHorizontalScrollTextView(Context context) {
         super(context);
         initView();
     }
 
-    public HorizontalTextView(Context context, AttributeSet attrs) {
+    public AutoHorizontalScrollTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView();
     }
 
-    public HorizontalTextView(Context context, AttributeSet attrs, int defStyle) {
+    public AutoHorizontalScrollTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         initView();
     }
@@ -51,13 +49,12 @@ public class HorizontalTextView extends AppCompatTextView implements View.OnClic
 
     public void init() {
         paint = getPaint();
+        paint.setColor(getCurrentTextColor());
         text = getText().toString();
         textLength = paint.measureText(text);
         viewWidth = getWidth();
-        step = textLength;
-        temp_view_plus_text_length = viewWidth + textLength;
-        temp_view_plus_two_text_length = (float) (viewWidth + textLength * 2);
         y = getTextSize() + getPaddingTop();
+        startScroll();
     }
 
     @Override
@@ -101,8 +98,8 @@ public class HorizontalTextView extends AppCompatTextView implements View.OnClic
         }
 
 
-        public static final Parcelable.Creator<SavedState> CREATOR
-                = new Parcelable.Creator<SavedState>() {
+        public static final Creator<SavedState> CREATOR
+                = new Creator<SavedState>() {
 
             public SavedState[] newArray(int size) {
                 return new SavedState[size];
@@ -118,50 +115,55 @@ public class HorizontalTextView extends AppCompatTextView implements View.OnClic
             super(in);
             boolean[] b = null;
             in.readBooleanArray(b);
-            if (b != null && b.length > 0)
+            if (b != null && b.length > 0) {
                 isStarting = b[0];
+            }
             step = in.readFloat();
         }
     }
 
 
-    public void startScroll() {
-        isStarting = true;
-        invalidate();
+    private void startScroll() {
+        //如果view宽度小于文字宽度，开启自动滚动
+        if (viewWidth < textLength) {
+            isStarting = true;
+            mStepwidth = 0.2f * textLength / viewWidth;
+            if (mStepwidth > 0.5f) {
+                mStepwidth = 0.5f;
+            }
+            invalidate();
+        }
     }
 
 
-    public void stopScroll() {
+    private void stopScroll() {
         isStarting = false;
         invalidate();
     }
 
 
-    boolean flag = false;
+    boolean leftSlideflag = false;
 
     @Override
     public void onDraw(Canvas canvas) {
-        canvas.drawText(text, temp_view_plus_text_length - step, y, paint);
+        canvas.drawText(text, step, y, paint);
         if (!isStarting) {
             return;
         }
-
-        if (flag) {
-            step += 0.5;//0.5为文字滚动速度。
+        if (leftSlideflag) {
+            step -= mStepwidth;
         } else {
-            step -= 0.5;
+            step += mStepwidth;
         }
-        if (step > temp_view_plus_two_text_length) {
-            flag = false;
+        if (step >= 0) {
+            leftSlideflag = true;
         }
 
-        if (step < textLength) {
-            flag = true;
+        if (step <= viewWidth - textLength) {
+            leftSlideflag = false;
         }
 
         invalidate();
-
-
     }
 
 
@@ -174,16 +176,18 @@ public class HorizontalTextView extends AppCompatTextView implements View.OnClic
         if (!TextUtils.isEmpty(text)) {
             setText(text);
             init();
+            startScroll();
         }
     }
 
 
     @Override
     public void onClick(View v) {
-        if (isStarting)
-            stopScroll();
-        else
-            startScroll();
+//        if (isStarting) {
+//            stopScroll();
+//        } else {
+//            startScroll();
+//        }
     }
 }
 
