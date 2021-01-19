@@ -2,9 +2,13 @@ package com.emp.yjy.baselib.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.media.ExifInterface;
 import android.os.Build;
 import android.renderscript.Allocation;
@@ -161,7 +165,7 @@ public class BitmapUtils {
     }
 
     /**
-     * nv21视频流转化为bitmap
+     * nv21视频流转化为bitmap(高效)
      *
      * @param nv21Data nv21数据流
      * @param width    预览宽度
@@ -183,5 +187,34 @@ public class BitmapUtils {
         Bitmap bmpOut = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         out.copyTo(bmpOut);
         return bmpOut;
+    }
+
+    /**
+     * nv21视频流转化为bitmap(效率较低，但是尺寸相同时能复用内存，减少gc)
+     *
+     * @param nv21    nv21数据流
+     * @param width   预览宽度
+     * @param height  预览高度
+     * @param quality 质量系数（0-100）
+     * @return bitmap
+     */
+    public static Bitmap nv21ToBitmap(byte[] nv21, int width, int height, int quality) {
+        Bitmap bitmap = null;
+        try {
+            YuvImage image = new YuvImage(nv21, ImageFormat.NV21, width, height, null);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            if (quality < 0 || quality > 100) {
+                quality = 100;
+            }
+            image.compressToJpeg(new Rect(0, 0, width, height), quality, stream);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 1;
+            options.inMutable = true;
+            bitmap = BitmapFactory.decodeByteArray(stream.toByteArray(), 0, stream.size(), options);
+            stream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 }
