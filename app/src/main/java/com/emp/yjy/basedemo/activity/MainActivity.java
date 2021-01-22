@@ -23,6 +23,7 @@ public class MainActivity extends CusBaseActivity implements View.OnClickListene
     private Button mBtnMultiDisplay;
     private Button mBtnCamera2Demo;
     private Button mTcpDemo;
+    private Button mBtnSignView;
 
     @Override
     protected void initData() {
@@ -40,6 +41,7 @@ public class MainActivity extends CusBaseActivity implements View.OnClickListene
         mBtnMultiDisplay = findViewById(R.id.btn_multi_display);
         mBtnCamera2Demo = findViewById(R.id.btn_Camera2_demo);
         mTcpDemo = findViewById(R.id.btn_Tcp_demo);
+        mBtnSignView = findViewById(R.id.btn_signature_view_demo);
     }
 
     @Override
@@ -59,6 +61,7 @@ public class MainActivity extends CusBaseActivity implements View.OnClickListene
         mBtnMultiDisplay.setOnClickListener(this::onClick);
         mBtnCamera2Demo.setOnClickListener(this::onClick);
         mTcpDemo.setOnClickListener(this::onClick);
+        mBtnSignView.setOnClickListener(this::onClick);
     }
 
     @Override
@@ -91,6 +94,9 @@ public class MainActivity extends CusBaseActivity implements View.OnClickListene
                 break;
             case R.id.btn_Tcp_demo:
                 jumpToActivity(TcpDemoActivity.class);
+                break;
+            case R.id.btn_signature_view_demo:
+                jumpToActivity(SignatureViewDemoActivity.class);
                 break;
             default:
                 break;
