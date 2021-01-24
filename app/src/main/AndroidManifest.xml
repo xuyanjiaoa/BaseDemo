@@ -17,8 +17,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BaseDemo">
-        <activity
-            android:name=".activity.SignatureViewDemoActivity" />
+        <activity android:name=".activity.AudioWaveViewDemoActivity"></activity>
+        <activity android:name=".activity.SignatureViewDemoActivity" />
         <activity
             android:name=".activity.TcpDemoActivity"
             android:screenOrientation="portrait" />

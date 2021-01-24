@@ -81,6 +81,13 @@
            android:layout_margin="5dp"
            android:layout_height="wrap_content" />
 
+       <Button
+           android:text="音频水波纹控件示例"
+           android:id="@+id/btn_audio_wave_view_demo"
+           android:layout_width="match_parent"
+           android:layout_margin="5dp"
+           android:layout_height="wrap_content" />
+
 
 
 
