@@ -97,4 +97,9 @@
         <!--提示文字与View（或相机镜头或扫描框）的右间距-->
         <attr name="clvTextRightMargin" format="dimension"/>
     </declare-styleable>
+
+    <declare-styleable name="RhythmTextView">
+        <attr name="rhythmText" format="string" />
+        <attr name="rhythmDuration" format="integer" />
+    </declare-styleable>
 </resources>
