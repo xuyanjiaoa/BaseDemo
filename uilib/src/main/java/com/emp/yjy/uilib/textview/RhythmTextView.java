@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
-import com.emp.yjy.baselib.utils.LogUtils;
 import com.emp.yjy.uilib.R;
 
 import java.util.Timer;
@@ -56,8 +55,6 @@ public class RhythmTextView extends AppCompatTextView {
      * 当前绘制的最后一个字符的位置
      */
     private int mCurLastTextPos;
-
-
     /**
      * 文字文本个数
      */
@@ -71,6 +68,11 @@ public class RhythmTextView extends AppCompatTextView {
      * textView文本
      */
     private String mText;
+    private String mShowStr;
+    /**
+     * 是否开始律动
+     */
+    private boolean mStartRhythm;
 
 
     public RhythmTextView(@NonNull Context context) {
@@ -107,7 +109,11 @@ public class RhythmTextView extends AppCompatTextView {
             mTextChars = mText.toCharArray();
             mTextSize = mTextChars.length;
             mCurLastTextPos = mRhythmTextStartPos;
-            setText(mText.substring(0, mRhythmTextStartPos));
+            mShowStr = mText.substring(0, mRhythmTextStartPos);
+            setText(mShowStr);
+            if (mStartRhythm) {
+                startRhythm();
+            }
         }
     }
 
@@ -121,26 +127,29 @@ public class RhythmTextView extends AppCompatTextView {
     private void initAttrs(Context context, AttributeSet attrs, int defStyleAttr) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RhythmTextView, defStyleAttr, 0);
         mRhythmText = typedArray.getString(R.styleable.RhythmTextView_rhythmText);
-        mRhythmTextDuration = typedArray.getInt(R.styleable.RhythmTextView_rhythmDuration, 200);
+        mRhythmTextDuration = typedArray.getInt(R.styleable.RhythmTextView_rhythmDuration, 400);
+        if (mRhythmTextDuration <= 0) {
+            mRhythmTextDuration = 400;
+        }
+        mStartRhythm = typedArray.getBoolean(R.styleable.RhythmTextView_startRhythm, false);
         typedArray.recycle();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (mTextChars == null) {
-            return;
-        }
-
-        if (mCurLastTextPos > mRhythmTextEndPos) {
-            mCurLastTextPos = mRhythmTextStartPos;
-        }
+//        if (mTextChars == null) {
+//            return;
+//        }
+//
+//        if (mCurLastTextPos > mRhythmTextEndPos) {
+//            mCurLastTextPos = mRhythmTextStartPos;
+//        }
         // TODO: 2021/1/24 暂时先考虑律动的文字只能在最后
-        canvas.drawText(mTextChars, 0, mCurLastTextPos, 0, mTextY, mPaint);
-//        canvas.drawText(mText.substring(0, mCurLastTextPos), 0, mCurLastTextPos, 0, mTextY, mPaint);
-        mCurLastTextPos++;
-
-
+//        canvas.drawText(mTextChars, 0, mCurLastTextPos, 0, mTextY, mPaint);
+////        canvas.drawText(mText.substring(0, mCurLastTextPos), 0, mCurLastTextPos, 0, mTextY, mPaint);
+//        mCurLastTextPos++;
+        setText(mShowStr);
     }
 
     /**
@@ -163,10 +172,14 @@ public class RhythmTextView extends AppCompatTextView {
             mTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    LogUtils.d(TAG, "刷新控件");
-                    invalidate();
+                    if (mCurLastTextPos > mRhythmTextEndPos) {
+                        mCurLastTextPos = mRhythmTextStartPos;
+                    }
+                    mShowStr = mText.substring(0, mCurLastTextPos);
+                    mCurLastTextPos++;
+                    postInvalidate();
                 }
-            }, 0, mRhythmTextDuration);
+            }, mRhythmTextDuration, mRhythmTextDuration);
         }
     }
 
@@ -179,6 +192,4 @@ public class RhythmTextView extends AppCompatTextView {
             mTimer = null;
         }
     }
-
-
 }

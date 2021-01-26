@@ -101,5 +101,6 @@
     <declare-styleable name="RhythmTextView">
         <attr name="rhythmText" format="string" />
         <attr name="rhythmDuration" format="integer" />
+        <attr name="startRhythm" format="boolean" />
     </declare-styleable>
 </resources>
